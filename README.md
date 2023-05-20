@@ -1,6 +1,9 @@
 # css-practice
 <div>
   <pre>
+  
+  Text="<%# Request.QueryString["parameter"] %>"
+  
 [default.aspx.cs]
    using System;
 using System.Collections.Generic;
