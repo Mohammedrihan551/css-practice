@@ -1,6 +1,147 @@
 # css-practice
 <div>
   <pre>
+  [default.spx.cs]
+   using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Data;
+
+namespace Practiceeasp
+{
+    public partial class _Default : Page
+    {
+
+        SqlConnection connection = new SqlConnection("Data Source=LAPTOP-6MUQ531V;Initial Catalog=practice_db;Integrated Security=True");
+
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                GetEmployeeList();
+            }
+        }
+
+
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string ename = Convert.ToString(TextBox2.Text);
+                string ecity= Convert.ToString(DropDownList1.SelectedValue);
+                string esex = Convert.ToString(RadioButtonList1.SelectedValue);
+                float eage = float.Parse(TextBox3.Text);
+                DateTime ejoining = DateTime.Parse(TextBox4.Text);
+                string econtact =Convert.ToString(TextBox5.Text);
+
+                connection.Open();
+
+
+                SqlCommand command = new SqlCommand("Insert into employee  values (@name,@city,@age,@sex,@joining,@contact)",connection);
+                command.Parameters.AddWithValue("@name",ename);
+                command.Parameters.AddWithValue("@city", ecity);
+                command.Parameters.AddWithValue("@age", eage);
+                command.Parameters.AddWithValue("@sex", esex);
+                command.Parameters.AddWithValue("@joining", ejoining);
+                command.Parameters.AddWithValue("@contact", econtact);
+                command.ExecuteNonQuery();
+                connection.Close();
+
+                Label9.Text = "Employee Created";
+                GetEmployeeList();
+
+            }
+            catch (Exception ex)
+            {
+                Label9.Text = ex.Message;
+            }
+        }
+
+        void GetEmployeeList()
+        {
+            SqlCommand command = new SqlCommand("Select * from employee", connection);
+            SqlDataAdapter sda = new SqlDataAdapter(command);
+            DataTable dt = new DataTable();
+            sda.Fill(dt);
+            GridView1.DataSource = dt;
+            GridView1.DataBind();
+        }
+
+        protected void Button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int id = int.Parse(TextBox1.Text);
+                string ename = Convert.ToString(TextBox2.Text);
+                string ecity = Convert.ToString(DropDownList1.SelectedValue);
+                string esex = Convert.ToString(RadioButtonList1.SelectedValue);
+                float eage = float.Parse(TextBox3.Text);
+                DateTime ejoining = DateTime.Parse(TextBox4.Text);
+                string econtact = Convert.ToString(TextBox5.Text);
+
+                connection.Open();
+
+
+                SqlCommand command = new SqlCommand("update employee  set name=@name,city=@city,age=@age,sex=@sex,joining=@joining,contact=@contact where id=@id ", connection);
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@name", ename);
+                command.Parameters.AddWithValue("@city", ecity);
+                command.Parameters.AddWithValue("@age", eage);
+                command.Parameters.AddWithValue("@sex", esex);
+                command.Parameters.AddWithValue("@joining", ejoining);
+                command.Parameters.AddWithValue("@contact", econtact);
+                command.ExecuteNonQuery();
+                connection.Close();
+
+                Label9.Text = "Employee Updated";
+                GetEmployeeList();
+
+            }
+            catch (Exception ex)
+            {
+                Label9.Text = ex.Message;
+            }
+        }
+
+        protected void Button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int id = int.Parse(TextBox1.Text);
+                connection.Open();
+
+                SqlCommand command = new SqlCommand("delete employee  where id=@id ", connection);
+                command.Parameters.AddWithValue("@id", id);
+                command.ExecuteNonQuery();
+                connection.Close();
+
+                Label9.Text = "Employee Deleted";
+                GetEmployeeList();
+
+            }
+            catch (Exception ex)
+            {
+                Label9.Text = ex.Message;
+            }
+        }
+
+        protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            GridViewRow row = GridView1.SelectedRow;
+            Label9.Text = row.Cells[2].Text;
+            Response.Redirect("/new.aspx?id="+ row.Cells[1].Text+"&name="+ row.Cells[2].Text);
+        }
+    }
+}
+
+
+  
   [defult.aspx]
   <%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Practiceeasp._Default" %>
 
